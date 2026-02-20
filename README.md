@@ -1,0 +1,2 @@
+# programing_exercise_bot
+1118_aiweb 開発演習 プログラミングお題出してくれるアプリ
