@@ -1,0 +1,34 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>プログラミングお題出してくれるくん</title>
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+        <nav>
+            <div>
+                <a href="{{ url_for('presentation.top') }}">プログラミングお題出してくれるくん</a>
+                <button>
+                <span></span>
+                </button>
+
+                <div>
+                    <ul>
+                        <li>
+                            <a class="nav-link" href="{{ url_for('presentation.history') }}">履歴</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <span>{{ current_user.user_name }}さん、ログイン中</span>
+                    <a href="{{ url_for('auth.logout') }}">ログアウト</a>
+                </div>
+            </div>
+        </nav>
+    {% endif %}
+    <div>
+        {% block content %}{% endblock content %}
+    </div>
+
+</body>
+</html>
