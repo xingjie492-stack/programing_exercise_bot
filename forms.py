@@ -61,3 +61,38 @@ class UserForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError(f"メールアドレス'{email.data}'は既に存在します。別のメールアドレスを入力してください。")
+
+
+# ユーザ情報変更フォーム
+class UserEditForm(FlaskForm):
+    user_name = StringField(
+        "ユーザ名",
+        validators=[
+            DataRequired('ユーザ名は必須です'), 
+            Length(max=20, message='20文字以内で入力してください')
+            ]
+    )
+    email = StringField(
+        "メールアドレス",
+        validators=[
+            DataRequired('メールアドレスは必須です'),
+            Email()
+            ]
+    )
+    password = PasswordField(
+        "パスワード",
+        validators=[Length(4, 10, 'パスワードの長さは4文字以上10文字以内です')]
+    )
+    is_admin = BooleanField("管理者権限")
+    submit = SubmitField("更新")
+    
+# カスタムバリデータ
+    def validate_user_name(self, user_name):
+        user = User.query.filter_by(user_name=user_name.data).first()
+        if user:
+            raise ValidationError(f"ユーザ名'{user_name.data}'は既に存在します。別のユーザ名を入力してください。")
+        
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError(f"メールアドレス'{email.data}'は既に存在します。別のメールアドレスを入力してください。")
