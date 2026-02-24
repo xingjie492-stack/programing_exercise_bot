@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from models import User, Submissions
 from wtforms.validators import DataRequired, Length, ValidationError
 from wtforms import (StringField, PasswordField, BooleanField, SubmitField)
-from wtforms.validators import DataRequired, Email, Length
+from wtforms.validators import DataRequired, Email, Length, Optional
 
 # ログインフォーム
 class LoginForm(FlaskForm):
@@ -69,19 +69,22 @@ class UserEditForm(FlaskForm):
         "ユーザ名",
         validators=[
             DataRequired('ユーザ名は必須です'), 
-            Length(max=20, message='20文字以内で入力してください')
+            Length(max=20, message='20文字以内で入力してください'),
             ]
     )
     email = StringField(
         "メールアドレス",
         validators=[
             DataRequired('メールアドレスは必須です'),
-            Email()
+            Email(),
+            Optional()
             ]
     )
     password = PasswordField(
-        "パスワード",
-        validators=[Length(4, 10, 'パスワードの長さは4文字以上10文字以内です')]
+        "パスワード(変更しない場合は空欄)",
+        validators=[
+            Length(4, 10, 'パスワードの長さは4文字以上10文字以内です'),
+            ]
     )
     is_admin = BooleanField("管理者権限")
     submit = SubmitField("更新")
@@ -96,3 +99,25 @@ class UserEditForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError(f"メールアドレス'{email.data}'は既に存在します。別のメールアドレスを入力してください。")
+
+    def __init__(self, user_id=None, *args, **kwargs):
+        super(UserEditForm, self).__init__(*args, **kwargs)
+        self.user_id = user_id  # 現在編集中のユーザーIDを保持
+
+    def validate_user_name(self, user_name):
+        # 「自分以外」で同じユーザー名を持つ人がいるかチェック
+        user = User.query.filter(
+            User.user_name == user_name.data,
+            User.user_id != self.user_id
+        ).first()
+        if user:
+            raise ValidationError(f"ユーザ名'{user_name.data}'は既に存在します。")
+
+    def validate_email(self, email):
+        # 「自分以外」で同じメールアドレスを持つ人がいるかチェック
+        user = User.query.filter(
+            User.email == email.data,
+            User.user_id != self.user_id
+        ).first()
+        if user:
+            raise ValidationError(f"メールアドレス'{email.data}'は既に存在します。")

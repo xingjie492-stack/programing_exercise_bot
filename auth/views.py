@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models import db, User
-from forms import LoginForm, UserForm
+from forms import LoginForm, UserForm, UserEditForm
 from flask_login import login_user, logout_user, login_required
 
 # authのBlueprint
@@ -54,3 +54,41 @@ def register():
         return redirect(url_for("auth.login"))
     
     return render_template("auth/register_form.html", form=form)
+
+# 更新
+@auth_bp.route(
+    "/update/<int:user_id>", 
+    methods=["GET", "POST"]
+    )
+@login_required
+def update(user_id):
+    target_data = User.query.get_or_404(user_id)
+    form = UserEditForm(user_id=target_data.user_id, obj=target_data)
+    if request.method == 'POST' and form.validate():
+        target_data.user_name = form.user_name.data
+        target_data.email = form.email.data
+        if form.password.data:
+            target_data.set_password(form.password.data)
+        db.session.commit()
+        flash('変更しました')
+        return redirect(url_for("presentation.presentation"))
+    return render_template(
+        "auth/update_form.html", 
+        form=form, 
+        edit_id=target_data.user_id
+        )
+    
+# 削除
+@auth_bp.route("/delete/<int:user_id>", methods=["GET", "POST"])
+@login_required
+def delete(user_id):
+    user = User.query.get_or_404(user_id)
+    if request.method == "POST":
+        # 「本当に削除」ボタンが押された時
+        db.session.delete(user)
+        db.session.commit()
+        flash("アカウントを削除しました。")
+        return redirect(url_for("auth.login"))
+    
+    # GETの時は確認画面を表示
+    return render_template("auth/delete_confirm.html", user=user)
