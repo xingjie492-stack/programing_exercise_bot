@@ -7,3 +7,8 @@ presentation_bp = Blueprint(
     __name__, 
     url_prefix='/presentation'
     )
+
+@presentation_bp.route("/")
+@login_required
+def presentation():
+    return render_template("presentation/presentation.html")
