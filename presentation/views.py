@@ -20,6 +20,17 @@ if not GOOGLE_API_KEY:
 genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
+def generate_content(prompt):
+    config ={
+        "max_output_tokens": 2000, 
+        "temperature": 0
+    }
+    try:
+        response = model.generate_content(prompt, generation_config=config)
+        return response.text
+    except Exception as e:
+        raise e
+
 @presentation_bp.route("/presentation")
 @login_required
 def presentation():
