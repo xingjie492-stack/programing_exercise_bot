@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">サインアップ</h1>
+    <form action="{{ url_for('auth.register') }}" method="post" >
+        {{  form.hidden_tag() }}
+        <p>
+            {{ form.user_name.label }}<br>
+            {{ form.user_name(size=40) }}<br>
+            {% for error in form.user_name.errors %}
+                <span style="color:red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=40) }}<br>
+            {% for error in form.email.errors %}
+                <span style="color:red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=40) }}<br>
+            {% for error in form.password.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+    <p>
+        {{ form.is_admin() }}
+        {{ form.is_admin.label }}
+    </p>
+    <input type="submit" value="登録">
+    </form>
+    <p></p>
+        すでにアカウントをお持ちの場合は、
+        <a href="{{ url_for('auth.login') }}">こちら</a>
+        からログインしてください
+</div>
+{% endblock content %}

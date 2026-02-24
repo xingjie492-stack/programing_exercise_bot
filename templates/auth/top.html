@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="my-4">ログイン</h1>
+    {% from "_formhelpers.html" import render_field %}
+    <form action="{{ url_for('auth.login') }}" method="post" >
+
+        {{ form.hidden_tag() }}
+        {{ render_field(form.user_name, class="form-control") }}
+        {{ render_field(form.password, class="form-control") }}
+        <br>
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-info">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+
+    <p class="my-3">アカウントをお持ちでない場合は、
+    <a href="{{ url_for('auth.register') }}">こちら</a>
+    から登録してください
+    </p>
+{% endblock content %}
