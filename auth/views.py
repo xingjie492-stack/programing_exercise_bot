@@ -43,7 +43,6 @@ def register():
             password=password, 
             email=email, 
             is_admin=is_admin, 
-            is_active=True
             )
         
         user.set_password(password)
