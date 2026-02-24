@@ -30,6 +30,14 @@ def generate_content(prompt):
         return response.text
     except Exception as e:
         raise e
+    
+def generate_problem():
+    prompt = (
+    """あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題を出題してください。
+    """
+    )
+    problem = generate_content(prompt)
+    return render_template("presentation/upload.html", problem=problem)
 
 @presentation_bp.route("/presentation")
 @login_required
