@@ -63,11 +63,12 @@ def register():
 @login_required
 def update(user_id):
     target_data = User.query.get_or_404(user_id)
-    form = UserEditForm(obj=target_data)
+    form = UserEditForm(user_id=target_data.user_id, obj=target_data)
     if request.method == 'POST' and form.validate():
         target_data.user_name = form.user_name.data
-        target_data.password = form.password.data
         target_data.email = form.email.data
+        if form.password.data:
+            target_data.set_password(form.password.data)
         db.session.commit()
         flash('変更しました')
         return redirect(url_for("presentation.presentation"))

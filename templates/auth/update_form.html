@@ -3,7 +3,7 @@
 {% block content %}
     <h1>ユーザ情報を変更</h1>
     {% from "_formhelpers.html" import render_field %}
-    <form action="{{ url_for('auth.update', user_id=edit_id) }}" method="post" >
+    <form action="{{ url_for('auth.update', user_id=edit_id) }}" method="post">
         {{ form.hidden_tag() }}
 
         {{ render_field(form.user_name) }}
