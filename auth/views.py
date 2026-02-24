@@ -77,3 +77,12 @@ def update(user_id):
         form=form, 
         edit_id=target_data.user_id
         )
+    
+# 削除
+@auth_bp.route("/delete/<int:user_id>")
+@login_required
+def delete(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for("auth.login"))
