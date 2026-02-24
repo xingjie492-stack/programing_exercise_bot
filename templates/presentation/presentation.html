@@ -4,4 +4,5 @@
     <h1>プログラミングお題出してくれるくん</h1>
     <p>お題を出すよ！</p>
     <a href="{{ url_for('auth.update', user_id=current_user.user_id) }}" class="btn btn-outline-primary btn-sm">変更</a>
+    <a href="{{ url_for('auth.delete', user_id=current_user.user_id) }}" class="btn btn-outline-danger btn-sm">削除</a>
 {% endblock content %}
