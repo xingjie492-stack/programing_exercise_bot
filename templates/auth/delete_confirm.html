@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>退会の確認</h2>
+    <p>{{ user.user_name }} さん、本当にアカウントを削除してもよろしいですか？</p>
+
+    <form action="{{ url_for('auth.delete', user_id=user.user_id) }}" method="POST">
+        <button type="submit" class="btn-danger">はい、削除します</button>
+        <a href="{{ url_for('presentation.presentation') }}">いいえ、戻ります</a>
+    </form>
+{% endblock content %}

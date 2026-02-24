@@ -79,10 +79,16 @@ def update(user_id):
         )
     
 # 削除
-@auth_bp.route("/delete/<int:user_id>")
+@auth_bp.route("/delete/<int:user_id>", methods=["GET", "POST"])
 @login_required
 def delete(user_id):
     user = User.query.get_or_404(user_id)
-    db.session.delete(user)
-    db.session.commit()
-    return redirect(url_for("auth.login"))
+    if request.method == "POST":
+        # 「本当に削除」ボタンが押された時
+        db.session.delete(user)
+        db.session.commit()
+        flash("アカウントを削除しました。")
+        return redirect(url_for("auth.login"))
+    
+    # GETの時は確認画面を表示
+    return render_template("auth/delete_confirm.html", user=user)
