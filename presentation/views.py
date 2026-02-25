@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 from forms import UsersAnswer
+from datetime import datetime
 
 presentation_bp = Blueprint(
     'presentation', 
@@ -36,10 +37,17 @@ def generate_content(prompt):
 @login_required
 def generate_problem():
     form = UsersAnswer()
+
     if request.method =="GET":
         prompt = """あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題を1問、Markdown形式で出題してください。"""
         problem = generate_content(prompt)
         session['current_problem'] = problem
+        submission = Submissions(
+            create_date = datetime.now,
+            problem_text = problem
+        )
+        db.session.add(submission)
+        db.session.commit
     else:
         problem = session.get('current_problem')
         
@@ -64,6 +72,7 @@ def review_code():
         """
 
         review = generate_content(prompt)
+        # この辺にsubmissionインスタンスにuser_codeとreviewを追加して更新する記述書く
         return render_template("presentation/review.html", review=review)
     flash("バリデーションエラーが発生しました")
     return(url_for("presentation.generate_problem"))

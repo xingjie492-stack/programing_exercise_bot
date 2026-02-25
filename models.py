@@ -46,7 +46,7 @@ class Submissions(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('account.user_id'), nullable=False) # ユーザID(FK)
     create_date = db.Column(db.DateTime, server_default=db.func.now()) # 作成日
     problem_text = db.Column(db.Text, nullable=False) # 問題文
-    user_code = db.Column(db.Text, nullable=False) # ユーザ回答
+    user_code = db.Column(db.Text) # ユーザ回答
     review = db.Column(db.Text) # レビュー
     reference_solution = db.Column(db.Text) # 参考解答
     difficulty = db.Column(db.String(20)) # 難易度
