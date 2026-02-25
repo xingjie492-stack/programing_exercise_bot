@@ -35,7 +35,7 @@ def generate_content(prompt):
 @login_required
 def generate_problem():
     prompt = (
-    """あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題をテキストベースで出題してください。なお、お題はMarkdown形式で出力してください。
+    """あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題を1問、Markdown形式で出題してください
     """
     )
     problem = generate_content(prompt)
