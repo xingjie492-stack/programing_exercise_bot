@@ -23,7 +23,7 @@ model = genai.GenerativeModel('gemini-2.5-flash-lite')
 def generate_content(prompt):
     config ={
         "max_output_tokens": 2000, 
-        "temperature": 0
+        "temperature": 0.7
     }
     try:
         response = model.generate_content(prompt, generation_config=config)
