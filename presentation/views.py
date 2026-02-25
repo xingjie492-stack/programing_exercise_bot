@@ -30,7 +30,9 @@ def generate_content(prompt):
         return response.text
     except Exception as e:
         raise e
-    
+
+@presentation_bp.route("/upload")
+@login_required
 def generate_problem():
     prompt = (
     """あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題を出題してください。
