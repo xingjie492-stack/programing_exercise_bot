@@ -1,8 +1,10 @@
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <title>プログラミングお題出してくれるくん</title>
-</head>
+{% block header %}    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <title>プログラミングお題出してくれるくん</title>
+    </head>
+{% endblock header %}
 <body>
     {% if current_user.is_authenticated %}
         <nav>
