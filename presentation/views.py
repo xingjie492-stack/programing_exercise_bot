@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from models import db, User, Submissions
 from flask_login import login_required
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from forms import UsersAnswer
 
 presentation_bp = Blueprint(
     'presentation', 
@@ -34,12 +35,38 @@ def generate_content(prompt):
 @presentation_bp.route("/upload")
 @login_required
 def generate_problem():
-    prompt = (
-    """あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題をテキストベースで出題してください。なお、お題はMarkdown形式で出力してください。
-    """
-    )
-    problem = generate_content(prompt)
-    return render_template("presentation/upload.html", problem=problem)
+    form = UsersAnswer()
+    if request.method =="GET":
+        prompt = """あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題を1問、Markdown形式で出題してください。"""
+        problem = generate_content(prompt)
+        session['current_problem'] = problem
+    else:
+        problem = session.get('current_problem')
+        
+    return render_template("presentation/upload.html", problem=problem, form=form)
+
+@presentation_bp.route("/review", methods=["POST"])
+@login_required
+def review_code():
+    form = UsersAnswer()
+    problem_text = problem_text = session.get('current_problem', '問題が見つかりませんでした。')
+    if form.validate_on_submit():
+        prompt = f"""
+        あなたは親切で的確なPython講師です。
+        以下の「出題した問題」に対して、生徒が作成した「提出コード」を添削し、フィードバックを行ってください。
+
+        ### 1. 出題した問題
+        {problem_text}
+
+        ### 2. 生徒の提出コード
+        ```python
+        {form}
+        """
+
+        review = generate_content(prompt)
+        return render_template("presentation/review.html", review=review)
+    flash("バリデーションエラーが発生しました")
+    return(url_for("presentation.generate_problem"))
 
 @presentation_bp.route("/presentation")
 @login_required

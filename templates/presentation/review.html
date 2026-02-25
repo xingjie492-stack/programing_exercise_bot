@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <head>
+        <meta charset="UTF-8">
+        <title>添削結果</title>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        
+        <style>
+            .review-box {
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                line-height: 1.6;
+                background-color: #ffffff;
+            }
+            pre code { border-radius: 5px; }
+        </style>
+    </head>
+{% endblock header %}
+
+{% block content %}
+    <h1>AI講師による添削結果</h1>
+    
+    <div id="review-content" class="review-box"></div>
+    
+    <script>
+        // Python(views.py)から渡された review 変数を取得
+        const rawMarkdown = {{ review | tojson }};
+        
+        // MarkdownをHTMLに変換して表示
+        document.getElementById('review-content').innerHTML = marked.parse(rawMarkdown);
+        
+        // コードブロックの色付け
+        hljs.highlightAll();
+    </script>
+    
+    <br>
+    <a href="{{ url_for('presentation.generate_problem') }}" class="btn btn-secondary">次の問題へ</a>
+{% endblock content %}
