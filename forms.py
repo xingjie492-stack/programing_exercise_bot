@@ -124,5 +124,8 @@ class UserEditForm(FlaskForm):
 
 # ユーザ回答提出フォーム
 class UsersAnswer(FlaskForm):
-    user_code = StringField("回答", DataRequired('回答を入力してください'))
+    user_code = StringField(
+        "回答",
+        validators = [DataRequired("回答を入力してください")]
+    )
     submit = SubmitField("提出！")
