@@ -121,3 +121,8 @@ class UserEditForm(FlaskForm):
         ).first()
         if user:
             raise ValidationError(f"メールアドレス'{email.data}'は既に存在します。")
+
+# ユーザ回答提出フォーム
+class UsersAnswer(FlaskForm):
+    user_code = StringField("回答", DataRequired('回答を入力してください'))
+    submit = SubmitField("提出！")
