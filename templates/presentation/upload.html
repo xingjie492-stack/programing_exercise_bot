@@ -36,7 +36,20 @@
             // コードブロックをハイライトする
             hljs.highlightAll();
         </script>
+        <br>
+        <h2>回答フォーム</h2>
+        {% from "_formhelpers.html" import render_field %}
+        <form action="{{ url_for('presentation.review_code') }}" method="post">
+            {{ form.hidden_tag() }}
+            {{ render_field(form.user_code, class="form-control") }}
+            <br>
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-info">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
 
         <br>
-        <a href="{{ url_for('presentation.presentation') }}">戻る</a>
 {% endblock content %}
