@@ -36,26 +36,50 @@ def generate_content(prompt):
     except Exception as e:
         raise e
 
-@presentation_bp.route("/upload")
+@presentation_bp.route("/generate")
 @login_required
 def generate_problem():
-    form = UsersAnswer()
+    # 1. AIで問題を生成
+    prompt = "あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題を1問、Markdown形式で出題してください。"
+    problem = generate_content(prompt)
+    
+    # 2. データベースに下書き（回答前）として保存
+    submission = Submissions(
+        user_id = current_user.user_id,
+        create_date = datetime.now(),
+        problem_text = problem
+    )
+    db.session.add(submission)
+    db.session.commit() # ここで submission_id が発行される
 
-    if request.method =="GET":
-        prompt = """あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題を1問、Markdown形式で出題してください。"""
-        problem = generate_content(prompt)
-        session['current_problem'] = problem
-        submission = Submissions(
-            user_id = current_user.user_id,
-            create_date = datetime.now(),
-            problem_text = problem
-        )
-        db.session.add(submission)
-        db.session.commit()
-    else:
-        problem = session.get('current_problem')
-        
-    return render_template("presentation/upload.html", problem=problem, form=form, submission=submission)
+    # 3. 動的なURL（下記の show_upload 関数）にリダイレクト
+    return redirect(url_for(
+        'presentation.show_upload', 
+        user_id=current_user.user_id, 
+        submission_id=submission.submission_id
+    ))
+
+@presentation_bp.route("/upload/<int:user_id>/<int:submission_id>")
+@login_required
+def show_upload(user_id, submission_id):
+    # URLのIDからDBから問題を特定
+    submission = Submissions.query.get_or_404(submission_id)
+    
+    # 他人の問題が見れないようにチェック
+    if submission.user_id != current_user.user_id:
+        flash("アクセス権限がありません")
+        return redirect(url_for("presentation.presentation"))
+
+    form = UsersAnswer()
+    # セッションにも保存（レビュー時に使用するため）
+    session['current_problem'] = submission.problem_text
+    
+    return render_template(
+        "presentation/upload.html", 
+        problem=submission.problem_text, 
+        form=form, 
+        submission=submission
+    )
 
 @presentation_bp.route("/review/<int:user_id>/<int:submission_id>", methods=["POST"])
 @login_required
