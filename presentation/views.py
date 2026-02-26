@@ -116,6 +116,35 @@ def review_code(user_id, submission_id):
     flash("バリデーションエラーが発生しました")
     return(url_for("presentation.generate_problem"))
 
+@presentation_bp.route("/reproduce/<int:submission_id>", methods=["POST"])
+@login_required
+def reproduce_problem(submission_id):
+    # 1. 元の問題データを取得
+    old_submission = Submissions.query.get_or_404(submission_id)
+    
+    # 2. 同じ問題内容で新しいレコードを作成 (user_codeやreviewは空のまま)
+    new_submission = Submissions(
+        user_id = current_user.user_id,
+        create_date = datetime.now(),
+        problem_text = old_submission.problem_text # 内容をコピー
+    )
+    
+    db.session.add(new_submission)
+    db.session.commit() # 新しいIDが発行される
+
+    # 3. 新しいIDのアップロード画面へリダイレクト
+    return redirect(url_for(
+        'presentation.show_upload', 
+        user_id=current_user.user_id, 
+        submission_id=new_submission.submission_id
+    ))
+
+@presentation_bp.route("/history")
+@login_required
+def show_history():
+    problem_history = Submissions.query.filter_by(user_id=current_user.user_id).all()
+    return render_template('presentation/history.html', problem_history=problem_history)
+
 @presentation_bp.route("/presentation")
 @login_required
 def presentation():
