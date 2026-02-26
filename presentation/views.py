@@ -116,6 +116,12 @@ def review_code(user_id, submission_id):
     flash("バリデーションエラーが発生しました")
     return(url_for("presentation.generate_problem"))
 
+@presentation_bp.route("/history")
+@login_required
+def show_history():
+    problem_history = Submissions.query.filter_by(user_id=current_user.user_id).all()
+    return render_template('history.html', problem_history=problem_history)
+
 @presentation_bp.route("/presentation")
 @login_required
 def presentation():
