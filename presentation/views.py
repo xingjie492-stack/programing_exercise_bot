@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from models import db, User, Submissions
-from flask_login import login_required
+from models import db, Submissions
+from flask_login import login_required, current_user
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -23,6 +23,9 @@ genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
 def generate_content(prompt):
+    if os.getenv("MOCK_AI") == "true":
+        return "だみだみだみー"
+    
     config ={
         "max_output_tokens": 2000, 
         "temperature": 0.7
@@ -43,19 +46,20 @@ def generate_problem():
         problem = generate_content(prompt)
         session['current_problem'] = problem
         submission = Submissions(
-            create_date = datetime.now,
+            user_id = current_user.user_id,
+            create_date = datetime.now(),
             problem_text = problem
         )
         db.session.add(submission)
-        db.session.commit
+        db.session.commit()
     else:
         problem = session.get('current_problem')
         
-    return render_template("presentation/upload.html", problem=problem, form=form)
+    return render_template("presentation/upload.html", problem=problem, form=form, submission=submission)
 
-@presentation_bp.route("/review", methods=["POST"])
+@presentation_bp.route("/review/<int:user_id>/<int:submission_id>", methods=["POST"])
 @login_required
-def review_code():
+def review_code(user_id, submission_id):
     form = UsersAnswer()
     problem_text = problem_text = session.get('current_problem', '問題が見つかりませんでした。')
     if form.validate_on_submit():
@@ -68,11 +72,22 @@ def review_code():
 
         ### 2. 生徒の提出コード
         ```python
-        {form}
+        {form.user_code.data}
         """
 
         review = generate_content(prompt)
         # この辺にsubmissionインスタンスにuser_codeとreviewを追加して更新する記述書く
+        submission = Submissions.query.get_or_404(submission_id)
+        submission.user_code = form.user_code.data
+        submission.review = review
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash("データの保存中にエラーが発生しました")
+            return redirect(url_for("presentation.generate_problem"))
+
         return render_template("presentation/review.html", review=review)
     flash("バリデーションエラーが発生しました")
     return(url_for("presentation.generate_problem"))
