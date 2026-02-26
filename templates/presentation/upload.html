@@ -39,7 +39,7 @@
         <br>
         <h2>回答フォーム</h2>
         {% from "_formhelpers.html" import render_field %}
-        <form action="{{ url_for('presentation.review_code') }}" method="post">
+        <form action="{{ url_for('presentation.review_code', user_id=submission.user_id, submission_id=submission.submission_id) }}" method="post">
             {{ form.hidden_tag() }}
             {{ render_field(form.user_code, class="form-control") }}
             <br>

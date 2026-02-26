@@ -14,14 +14,14 @@
                 <span></span>
                 </button>
 
-                {# <div>
+                <div>
                     <ul>
                         <li>
-                            <a class="nav-link" href="{{ url_for('presentation.history') }}">履歴</a>
+                            <a class="nav-link" href="{{ url_for('presentation.show_history') }}">履歴</a>
                         </li>
                     </ul>
                 </div>
-                <div> #}
+                <div>
                     <span>{{ current_user.user_name }}さん、ログイン中</span>
                     <a href="{{ url_for('auth.logout') }}">ログアウト</a>
                 </div>
