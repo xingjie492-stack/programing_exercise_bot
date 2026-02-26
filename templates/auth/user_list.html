@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for user in users %}
+        <ul>
+            <li>
+                ユーザーID:{{ user.user_id }}
+                ユーザー名:{{ user.user_name }}
+                email:{{user.email }}
+                管理者権限:{{ user.is_admin }}
+                登録日:{{ user.sign_up_date }}
+            </li>
+        </ul>
+    {% endfor %}
+{% endblock content %}

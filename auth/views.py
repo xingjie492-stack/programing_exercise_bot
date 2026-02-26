@@ -92,3 +92,10 @@ def delete(user_id):
     
     # GETの時は確認画面を表示
     return render_template("auth/delete_confirm.html", user=user)
+
+# ユーザ情報一覧表示(管理者)
+@auth_bp.route("/user_list", )
+@login_required
+def show_user_list():
+    users = User.query.filter_by().all()
+    return render_template("auth/user_list.html", users=users)
