@@ -19,6 +19,11 @@
                         <li>
                             <a class="nav-link" href="{{ url_for('presentation.show_history') }}">履歴</a>
                         </li>
+                        <li>
+                            {% if current_user.is_admin %}
+                                <a class="nav-link" href="{{ url_for('auth.show_user_list') }}">ユーザ情報一覧</a>
+                            {% endif %}
+                        </li>
                     </ul>
                 </div>
                 <div>
