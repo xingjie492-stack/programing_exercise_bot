@@ -9,6 +9,9 @@
                 email:{{user.email }}
                 管理者権限:{{ user.is_admin }}
                 登録日:{{ user.sign_up_date }}
+                <a href="{{ url_for('auth.update', user_id=user.user_id) }}" class="btn btn-outline-primary btn-sm">変更</a>
+                <a href="{{ url_for('auth.delete', user_id=user.user_id) }}" class="btn btn-outline-danger btn-sm">削除</a>
+
             </li>
         </ul>
     {% endfor %}
