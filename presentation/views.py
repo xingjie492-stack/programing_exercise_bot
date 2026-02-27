@@ -99,9 +99,10 @@ def show_upload(user_id, submission_id):
 def review_code(user_id, submission_id):
     form = UsersAnswer()
     problem_text = session.get('current_problem', '問題が見つかりませんでした。')
+    submission = Submissions.query.get_or_404(submission_id)
     if form.validate_on_submit():
         prompt = f"""
-        あなたは親切で的確なプログラミング言語の講師です。
+        あなたは親切で的確な{ submission.language }の講師です。
         以下の「出題した問題」に対して、生徒が作成した「提出コード」を100点満点で評価してください。
 
         ### 1. 出題した問題
@@ -114,7 +115,6 @@ def review_code(user_id, submission_id):
 
         review = generate_content(prompt)
         # この辺にsubmissionインスタンスにuser_codeとreviewを追加して更新する記述書く
-        submission = Submissions.query.get_or_404(submission_id)
         submission.user_code = form.user_code.data
         submission.review = review
 
@@ -162,8 +162,9 @@ def show_history():
 @login_required
 def example_answer(user_id, submission_id):
     problem_text = session.get('current_problem', '問題が見つかりませんでした。')
+    submission = Submissions.query.get_or_404(submission_id)
     prompt = f"""
-    あなたは親切で的確なプログラミング言語の講師です。
+    あなたは親切で的確な{ submission.language }の講師です。
     以下の「出題した問題」に対して、模範解答を一つ示してください。
 
     ### 1. 出題した問題
@@ -171,7 +172,6 @@ def example_answer(user_id, submission_id):
     """
 
     example = generate_content(prompt)
-    submission = Submissions.query.get_or_404(submission_id)
     submission.reference_solution = example
 
     try:
