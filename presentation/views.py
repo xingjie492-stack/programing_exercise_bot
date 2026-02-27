@@ -50,7 +50,7 @@ def generate_problem():
     # 1. AIで問題を生成
     prompt = f"""
     あなたはプログラミング言語「{ language }」の講師です。
-    「{ diffficulty }」を学んだ生徒に対して、その実力を試せるコーディング演習問題を一問出題してください。
+    「{ diffficulty }」を学んだ生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
     """
     problem = generate_content(prompt)
     
@@ -96,11 +96,11 @@ def show_upload(user_id, submission_id):
 @login_required
 def review_code(user_id, submission_id):
     form = UsersAnswer()
-    problem_text = problem_text = session.get('current_problem', '問題が見つかりませんでした。')
+    problem_text = session.get('current_problem', '問題が見つかりませんでした。')
     if form.validate_on_submit():
         prompt = f"""
-        あなたは親切で的確なPython講師です。
-        以下の「出題した問題」に対して、生徒が作成した「提出コード」を添削し、フィードバックを行ってください。
+        あなたは親切で的確なプログラミング言語の講師です。
+        以下の「出題した問題」に対して、生徒が作成した「提出コード」を100点満点で評価してください。
 
         ### 1. 出題した問題
         {problem_text}
@@ -156,6 +156,29 @@ def show_history():
     problem_history = Submissions.query.filter_by(user_id=current_user.user_id).all()
     return render_template('presentation/history.html', problem_history=problem_history)
 
+@presentation_bp.route("/example")
+@login_required
+def example_answer(submission_id):
+    problem_text = session.get('current_problem', '問題が見つかりませんでした。')
+    prompt = f"""
+    あなたは親切で的確なプログラミング言語の講師です。
+    以下の「出題した問題」に対して、模範解答を一つ示してください。
+
+    ### 1. 出題した問題
+    {problem_text}
+    """
+
+    example = generate_content(prompt)
+    submission = Submissions.query.get_or_404(submission_id)
+    submission.reference_solution = example
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        flash("データの保存中にエラーが発生しました")
+        return redirect(url_for("presentation.generate_problem"))
+    
 @presentation_bp.route("/presentation")
 @login_required
 def presentation():
