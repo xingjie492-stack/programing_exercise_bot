@@ -45,12 +45,12 @@ def generate_problem():
     def catch_diff_and_lang(d,l):
         return d,l
 
-    diffficulty, language = catch_diff_and_lang(selected_diff, selected_lang)
+    difficulty, language = catch_diff_and_lang(selected_diff, selected_lang)
     
     # 1. AIで問題を生成
     prompt = f"""
     あなたはプログラミング言語「{ language }」の講師です。
-    「{ diffficulty }」を学んだ生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+    「{ difficulty }」を学んだ生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
     """
     problem = generate_content(prompt)
     
@@ -58,7 +58,9 @@ def generate_problem():
     submission = Submissions(
         user_id = current_user.user_id,
         create_date = datetime.now(),
-        problem_text = problem
+        problem_text = problem,
+        difficulty = difficulty,
+        language = language
     )
     db.session.add(submission)
     db.session.commit() # ここで submission_id が発行される
