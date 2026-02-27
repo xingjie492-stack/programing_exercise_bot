@@ -39,4 +39,5 @@
     
     <br>
     <a href="{{ url_for('presentation.generate_problem') }}" class="btn btn-secondary">次の問題へ</a>
+    <a href="{{ url_for('presentation.example_answer', user_id=submission.user_id, submission_id=submission.submission_id) }}">模範解答を見る</a>
 {% endblock content %}

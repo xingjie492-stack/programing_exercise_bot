@@ -125,7 +125,7 @@ def review_code(user_id, submission_id):
             flash("データの保存中にエラーが発生しました")
             return redirect(url_for("presentation.generate_problem"))
 
-        return render_template("presentation/review.html", review=review)
+        return render_template("presentation/review.html", review=review, submission=submission)
     flash("バリデーションエラーが発生しました")
     return(url_for("presentation.generate_problem"))
 
@@ -158,9 +158,9 @@ def show_history():
     problem_history = Submissions.query.filter_by(user_id=current_user.user_id).all()
     return render_template('presentation/history.html', problem_history=problem_history)
 
-@presentation_bp.route("/example")
+@presentation_bp.route("/example/<int:user_id>/<int:submission_id>")
 @login_required
-def example_answer(submission_id):
+def example_answer(user_id, submission_id):
     problem_text = session.get('current_problem', '問題が見つかりませんでした。')
     prompt = f"""
     あなたは親切で的確なプログラミング言語の講師です。
@@ -180,7 +180,8 @@ def example_answer(submission_id):
         db.session.rollback()
         flash("データの保存中にエラーが発生しました")
         return redirect(url_for("presentation.generate_problem"))
-    
+    return render_template('presentation/example.html', example=example)
+
 @presentation_bp.route("/presentation")
 @login_required
 def presentation():
