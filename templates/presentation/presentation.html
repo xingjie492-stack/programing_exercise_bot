@@ -3,7 +3,21 @@
 {% block content %}
     <h1>プログラミングお題出してくれるくん</h1>
     <p>お題を出すよ！</p>
-    <a href="{{ url_for('presentation.generate_problem') }}">出すよお題！</a>
+    <form action="{{ url_for('presentation.generate_problem') }}" method="post">
+        <label for="language">出題言語を選択：</label>
+        <select name="selected_language" id="language">
+            <option value="python">python</option>
+            <option value="Java">Java</option>
+            <option value="C language">C言語</option>
+        </select>
+        <label for="difficulty">出題難易度を選択</label>
+        <select name="selected_difficulty" id="difficulty">
+            <option value="easy">かんたん</option>
+            <option value="normal">ふつう</option>
+            <option value="hard">むずい</option>
+        </select>
+        <button type="submit">出題</button>
+    </form>
     <a href="{{ url_for('auth.update', user_id=current_user.user_id) }}" class="btn btn-outline-primary btn-sm">変更</a>
     <a href="{{ url_for('auth.delete', user_id=current_user.user_id) }}" class="btn btn-outline-danger btn-sm">削除</a>
 {% endblock content %}

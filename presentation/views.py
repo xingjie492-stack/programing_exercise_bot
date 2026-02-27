@@ -24,7 +24,7 @@ model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
 def generate_content(prompt):
     if os.getenv("MOCK_AI") == "true":
-        return "だみだみだみー"
+        return f"渡されたプロンプト：{ prompt }"
     
     config ={
         "max_output_tokens": 2000, 
@@ -36,11 +36,22 @@ def generate_content(prompt):
     except Exception as e:
         raise e
 
-@presentation_bp.route("/generate")
+@presentation_bp.route("/generate", methods=["POST"])
 @login_required
 def generate_problem():
+    selected_diff = request.form.get('selected_difficulty')
+    selected_lang = request.form.get('selected_language')
+    
+    def catch_diff_and_lang(d,l):
+        return d,l
+
+    diffficulty, language = catch_diff_and_lang(selected_diff, selected_lang)
+    
     # 1. AIで問題を生成
-    prompt = "あなたはpythonの教師です。python初学者向けの教科書は一通り読んだという生徒に対して、その実力を試せるコーディングのお題を1問、Markdown形式で出題してください。"
+    prompt = f"""
+    あなたはプログラミング言語「{ language }」の講師です。
+    「{ diffficulty }」を学んだ生徒に対して、その実力を試せるコーディング演習問題を一問出題してください。
+    """
     problem = generate_content(prompt)
     
     # 2. データベースに下書き（回答前）として保存
