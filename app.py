@@ -25,6 +25,12 @@ login_manaagaer.login_view = "auth.login"
 app.register_blueprint(auth_bp)
 app.register_blueprint(presentation_bp)
 
+from flask import redirect, url_for
+
+@app.route("/")
+def index():
+    return redirect(url_for("auth.login"))
+
 # 404エラー時の処理
 @app.errorhandler(404)
 def not_found(error):
