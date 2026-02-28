@@ -1,0 +1,33 @@
+/* static/css/style.css */
+.editor-container {
+    border: 1px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.editor-header {
+    background-color: #333;
+    color: #aaa;
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    font-family: monospace;
+}
+
+.editor-textarea {
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+    font-family: 'Consolas', 'Monaco', monospace !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    padding: 15px !important;
+    border: none !important;
+    border-radius: 0 !important;
+    tab-size: 4;
+    caret-color: white;
+}
+
+.editor-textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
