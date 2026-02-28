@@ -65,10 +65,66 @@ def generate_problem():
     difficulty, language = catch_diff_and_lang(selected_diff, selected_lang)
     
     # 1. AIで問題を生成
-    prompt = f"""
-    あなたはプログラミング言語「{ language }」の講師です。
-    「{ difficulty }」を学んだ生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
-    """
+    if language == "python":
+        if difficulty == "easy":
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            これから「Python 3 エンジニア認定基礎試験」に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+        elif difficulty == "normal":
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            これから「Python 3 エンジニア認定基礎試験」に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+        else:
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            これから「PCPP1」に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+
+    if language == "Java":
+        if difficulty == "easy":
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            「Oracle Java Bronze」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+        elif difficulty == "normal":
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            「Oracle Java Silver」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+        else:
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            「Oracle Java Gold」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+
+    if language == "C language":
+        if difficulty == "easy":
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            「C言語プログラミング能力認定試験3級」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+        elif difficulty == "normal":
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            「C言語プログラミング能力認定試験2級」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+        else:
+            prompt = f"""
+            あなたはプログラミング言語「{ language }」の講師です。
+            「C言語プログラミング能力認定試験1級」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+            なお、ここで模範解答は提示しないでください。
+            """
+
     problem = generate_content(prompt,"problem")
     
     # 2. データベースに下書き（回答前）として保存
