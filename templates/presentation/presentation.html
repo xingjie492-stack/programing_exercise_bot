@@ -1,23 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>プログラミングお題出してくれるくん</h1>
-    <p>お題を出すよ！</p>
-    <form action="{{ url_for('presentation.generate_problem') }}" method="post">
-        <label for="language">出題言語を選択：</label>
-        <select name="selected_language" id="language">
-            <option value="python">python</option>
-            <option value="Java">Java</option>
-            <option value="C language">C言語</option>
-        </select>
-        <label for="difficulty">出題難易度を選択</label>
-        <select name="selected_difficulty" id="difficulty">
-            <option value="easy">かんたん</option>
-            <option value="normal">ふつう</option>
-            <option value="hard">むずい</option>
-        </select>
-        <button type="submit">出題</button>
-    </form>
-    <a href="{{ url_for('auth.update', user_id=current_user.user_id) }}" class="btn btn-outline-primary btn-sm">変更</a>
-    <a href="{{ url_for('auth.delete', user_id=current_user.user_id) }}" class="btn btn-outline-danger btn-sm">削除</a>
+<div class="py-3">
+    <h1 class="h3 mb-4">🎯 プログラミングお題出してくれるくん</h1>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">設定を選んでね！</h5>
+            <form action="{{ url_for('presentation.generate_problem') }}" method="post">
+                <div class="mb-3">
+                    <label for="language" class="form-label fw-bold">出題言語</label>
+                    <select name="selected_language" id="language" class="form-select">
+                        <option value="python">Python</option>
+                        <option value="Java">Java</option>
+                        <option value="C language">C言語</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="difficulty" class="form-label fw-bold">難易度</label>
+                    <select name="selected_difficulty" id="difficulty" class="form-select">
+                        <option value="easy">かんたん</option>
+                        <option value="normal">ふつう</option>
+                        <option value="hard">むずい</option>
+                    </select>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">問題を出す！</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-end">
+        <a href="{{ url_for('auth.update', user_id=current_user.user_id) }}" class="btn btn-outline-secondary btn-sm">ユーザー情報変更</a>
+        <a href="{{ url_for('auth.delete', user_id=current_user.user_id) }}" class="btn btn-outline-danger btn-sm">アカウント削除</a>
+    </div>
+</div>
 {% endblock content %}
