@@ -1,27 +1,29 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h1 class="h3 mb-4">📚 学習の履歴</h1>
+{% block title %}履歴 - プログラミングお題出してくれるくん{% endblock %}
 
-<div class="list-group shadow-sm">
-{% for history in problem_history %}
-    <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-        <div>
-            <span class="badge bg-secondary me-2">ID: {{ history.submission_id }}</span>
-            <span class="text-muted small">過去の挑戦</span>
+{% block content %}
+    <h1 class="h3 mb-4 text-secondary">📚 学習の履歴</h1>
+
+    <div class="list-group shadow-sm">
+    {% for history in problem_history %}
+        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3">
+            <div>
+                <span class="badge bg-secondary me-2 px-3">問題ID: {{ history.submission_id }}</span>
+                <span class="text-muted small">過去の提出</span>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('presentation.show_upload', user_id=history.user_id, submission_id=history.submission_id) }}" class="btn btn-sm btn-outline-primary">回答を表示</a>
+                
+                <form action="{{ url_for('presentation.reproduce_problem', submission_id=history.submission_id) }}" method="POST" class="m-0">
+                    <button type="submit" class="btn btn-sm btn-success">再挑戦</button>
+                </form>
+            </div>
         </div>
-        <div class="btn-group">
-            <a href="{{ url_for('presentation.show_upload', user_id=history.user_id, submission_id=history.submission_id) }}" class="btn btn-sm btn-outline-primary">表示</a>
-            
-            <form action="{{ url_for('presentation.reproduce_problem', submission_id=history.submission_id) }}" method="POST" class="d-inline">
-                <button type="submit" class="btn btn-sm btn-primary">再挑戦</button>
-            </form>
+    {% else %}
+        <div class="text-center py-5 border rounded bg-light">
+            <p class="text-muted mb-0">履歴はまだありません。「空っぽっぽ」</p>
         </div>
+    {% endfor %}
     </div>
-{% else %}
-    <div class="alert alert-light border text-center py-5">
-        <p class="mb-0 text-muted">まだ履歴がありません。「空っぽっぽ」</p>
-    </div>
-{% endfor %}
-</div>
 {% endblock content %}

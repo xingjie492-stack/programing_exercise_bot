@@ -1,24 +1,26 @@
 {% extends "base.html" %}
 
+{% block title %}お題選択 - プログラミングお題出してくれるくん{% endblock %}
+
 {% block content %}
 <div class="py-3">
-    <h1 class="h3 mb-4">🎯 プログラミングお題出してくれるくん</h1>
+    <h1 class="h3 mb-4 text-secondary">🎯 お題を生成する</h1>
     
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <h5 class="card-title mb-3">設定を選んでね！</h5>
+            <h5 class="card-title mb-4 border-bottom pb-2">出題設定</h5>
             <form action="{{ url_for('presentation.generate_problem') }}" method="post">
                 <div class="mb-3">
-                    <label for="language" class="form-label fw-bold">出題言語</label>
-                    <select name="selected_language" id="language" class="form-select">
+                    <label for="language" class="form-label fw-bold">出題言語を選択</label>
+                    <select name="selected_language" id="language" class="form-select form-select-lg">
                         <option value="python">Python</option>
                         <option value="Java">Java</option>
                         <option value="C language">C言語</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="difficulty" class="form-label fw-bold">難易度</label>
-                    <select name="selected_difficulty" id="difficulty" class="form-select">
+                <div class="mb-4">
+                    <label for="difficulty" class="form-label fw-bold">出題難易度を選択</label>
+                    <select name="selected_difficulty" id="difficulty" class="form-select form-select-lg">
                         <option value="easy">かんたん</option>
                         <option value="normal">ふつう</option>
                         <option value="hard">むずい</option>
@@ -31,7 +33,7 @@
         </div>
     </div>
 
-    <div class="text-end">
+    <div class="d-flex justify-content-end gap-2">
         <a href="{{ url_for('auth.update', user_id=current_user.user_id) }}" class="btn btn-outline-secondary btn-sm">ユーザー情報変更</a>
         <a href="{{ url_for('auth.delete', user_id=current_user.user_id) }}" class="btn btn-outline-danger btn-sm">アカウント削除</a>
     </div>

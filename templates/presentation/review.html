@@ -1,20 +1,28 @@
 {% extends "base.html" %}
 
+{% block title %}添削結果 - プログラミングお題出してくれるくん{% endblock %}
+
 {% block content %}
-<h1 class="h3 mb-4 text-success">📝 添削結果</h1>
-
-<div id="review-content" class="p-4 mb-4 border rounded bg-white shadow"></div>
-
-<div class="d-flex gap-2">
-    <a href="{{ url_for('presentation.generate_problem') }}" class="btn btn-primary px-4">次の問題に挑戦！</a>
-    <a href="{{ url_for('presentation.example_answer', user_id=submission.user_id, submission_id=submission.submission_id) }}" class="btn btn-outline-secondary">
-        模範解答を確認
-    </a>
-</div>
-
-<script>
-    const rawMarkdown = {{ review | tojson }};
-    document.getElementById('review-content').innerHTML = marked.parse(rawMarkdown);
-    hljs.highlightAll();
-</script>
+    <h1 class="h3 mb-4 text-success">📝 AI講師による添削結果</h1>
+    
+    <div id="review-content" class="p-4 mb-4 border rounded bg-white shadow-sm" style="min-height: 200px;"></div>
+    
+    <div class="d-flex flex-wrap gap-2 mt-4">
+        <a href="{{ url_for('presentation.generate_problem') }}" class="btn btn-primary px-4">次の問題へ挑戦</a>
+        <a href="{{ url_for('presentation.example_answer', user_id=submission.user_id, submission_id=submission.submission_id) }}" class="btn btn-outline-info">
+            模範解答を詳しく見る
+        </a>
+    </div>
 {% endblock content %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script>
+        const rawMarkdown = {{ review | tojson }};
+        document.getElementById('review-content').innerHTML = marked.parse(rawMarkdown);
+        hljs.highlightAll();
+    </script>
+{% endblock scripts %}

@@ -1,13 +1,25 @@
 {% extends "base.html" %}
 
+{% block title %}模範解答 - プログラミングお題出してくれるくん{% endblock %}
+
 {% block content %}
-<h1 class="h3 mb-4 text-info">💡 AIによる模範解答</h1>
-
-<div id="content" class="p-4 mb-4 border rounded bg-dark text-light shadow-lg"></div>
-
-<script>
-    const rawMarkdown = {{ example | tojson }};
-    document.getElementById('content').innerHTML = marked.parse(rawMarkdown);
-    hljs.highlightAll();
-</script>
+    <h1 class="h3 mb-4 text-info">💡 AIによる模範解答</h1>
+        
+    <div id="content" class="p-4 mb-4 border rounded bg-dark text-light shadow-lg"></div>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('presentation.presentation') }}" class="btn btn-secondary">トップへ戻る</a>
+    </div>
 {% endblock content %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <script>
+        const rawMarkdown = {{ example | tojson }};
+        document.getElementById('content').innerHTML = marked.parse(rawMarkdown);
+        hljs.highlightAll();
+    </script>
+{% endblock scripts %}
