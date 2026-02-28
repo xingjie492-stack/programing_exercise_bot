@@ -22,19 +22,36 @@ if not GOOGLE_API_KEY:
 genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
-def generate_content(prompt):
+def generate_content(prompt,mode):
     if os.getenv("MOCK_AI") == "true":
-        return f"渡されたプロンプト：{ prompt }"
+        
+        if mode == "problem":
+            return f"渡された問題プロンプト：{ prompt }"
+        else:
+            return f"渡されたレビュー又は模範解答プロンプト：{ prompt }"
     
-    config ={
+    config_problem ={
         "max_output_tokens": 2000, 
         "temperature": 0.7
     }
-    try:
-        response = model.generate_content(prompt, generation_config=config)
-        return response.text
-    except Exception as e:
-        raise e
+    
+    config_review_and_example = {
+        "max_output_tokens": 2000, 
+        "temperature": 0
+    }
+    if mode == "problem":
+        try:
+            response = model.generate_content(prompt, generation_config=config_problem)
+            return response.text
+        except Exception as e:
+            raise e
+
+    else:
+        try:
+            response = model.generate_content(prompt, generation_config=config_review_and_example)
+            return response.text
+        except Exception as e:
+            raise e
 
 @presentation_bp.route("/generate", methods=["POST"])
 @login_required
@@ -52,7 +69,7 @@ def generate_problem():
     あなたはプログラミング言語「{ language }」の講師です。
     「{ difficulty }」を学んだ生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
     """
-    problem = generate_content(prompt)
+    problem = generate_content(prompt,"problem")
     
     # 2. データベースに下書き（回答前）として保存
     submission = Submissions(
@@ -113,7 +130,7 @@ def review_code(user_id, submission_id):
         {form.user_code.data}
         """
 
-        review = generate_content(prompt)
+        review = generate_content(prompt,"review")
         # この辺にsubmissionインスタンスにuser_codeとreviewを追加して更新する記述書く
         submission.user_code = form.user_code.data
         submission.review = review
@@ -171,7 +188,7 @@ def example_answer(user_id, submission_id):
     {problem_text}
     """
 
-    example = generate_content(prompt)
+    example = generate_content(prompt,"example")
     submission.reference_solution = example
 
     try:
