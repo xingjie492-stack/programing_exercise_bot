@@ -1,56 +1,35 @@
 {% extends "base.html" %}
-{% block header %}
-    <head>
-        <meta charset="UTF-8">
-        <title>問題出題</title>
-        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-        
-        <style>
-            .problem-box {
-                padding: 20px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                line-height: 1.6;
-                background-color: #f9f9f9;
-            }
-            pre code { border-radius: 5px; }
-        </style>
-    </head>
-{% endblock header %}
 
 {% block content %}
-    <h1>AIからのコーディング課題</h1>
-        
-        <div id="content" class="problem-box"></div>
-        
-        <script>
-            // Pythonから渡された文字列をJavaScript変数に格納
-            // |tojson はクォートなどを適切に処理するためのFlask/Jinja2フィルタです
-            const rawMarkdown = {{ problem | tojson }};
-            
-            // MarkdownをHTMLに変換して流し込む
-            document.getElementById('content').innerHTML = marked.parse(rawMarkdown);
-            
-            // コードブロックをハイライトする
-            hljs.highlightAll();
-        </script>
-        <br>
-        <h2>回答フォーム</h2>
+<h1 class="h3 mb-4">💻 コーディング課題</h1>
+
+<div id="content" class="p-4 mb-4 border rounded bg-light shadow-sm"></div>
+
+<div class="card border-primary shadow-sm">
+    <div class="card-body">
+        <h2 class="h5 card-title mb-3 text-primary">回答フォーム</h2>
         {% from "_formhelpers.html" import render_field %}
         <form action="{{ url_for('presentation.review_code', user_id=submission.user_id, submission_id=submission.submission_id) }}" method="post">
             {{ form.hidden_tag() }}
-            {{ render_field(form.user_code, class="form-control") }}
-            <br>
-            {% for message in get_flashed_messages() %}
-            <div class="alert alert-info">
-                {{ message }}
+            {{ render_field(form.user_code, class="form-control font-monospace", rows="15", placeholder="ここにコードを書いてね") }}
+            
+            <div class="mt-3 d-flex justify-content-between align-items-center">
+                {{ form.submit(class="btn btn-success btn-lg") }}
+                <a href="{{ url_for('presentation.example_answer', user_id=submission.user_id, submission_id=submission.submission_id) }}" class="btn btn-link">
+                    まだ解けない…？（模範解答を見る）
+                </a>
             </div>
-            {% endfor %}
-            {{ form.submit(class="btn btn-primary") }}
         </form>
-        <a href="{{ url_for('presentation.example_answer', user_id=submission.user_id, submission_id=submission.submission_id) }}">模範解答を見る</a>
+    </div>
+</div>
 
-        <br>
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-info mt-3">{{ message }}</div>
+{% endfor %}
+
+<script>
+    const rawMarkdown = {{ problem | tojson }};
+    document.getElementById('content').innerHTML = marked.parse(rawMarkdown);
+    hljs.highlightAll();
+</script>
 {% endblock content %}
