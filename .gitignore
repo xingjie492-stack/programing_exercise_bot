@@ -1,3 +1,5 @@
 .env
 instance/programing_exercise_bot_tables.sqlite
 .conda
+__pycache__/
+*.sqlite
