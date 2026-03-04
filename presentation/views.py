@@ -324,13 +324,15 @@ def delete_all_history(user_id):
         flash("権限ないよ")
         redirect(url_for("presentation.show_history"))
 
-    for submission in submissions:
-        try:
+    try:
+        for submission in submissions:
             db.session.delete(submission)
-            db.session.commit()
-            flash("すべての履歴を削除しました。")
-        except Exception as e:
-            flash("削除処理中にエラーが発生しました")
+        db.session.commit()
+        flash("すべての履歴を削除しました")
+
+    except Exception as e:
+        db.session.rollback()
+        flash("削除処理中にエラーが発生しました")
 
     return redirect(url_for("presentation.show_history"))
 
