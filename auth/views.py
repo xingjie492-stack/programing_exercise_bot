@@ -15,7 +15,7 @@ def login():
         password = form.password.data
         user = User.query.filter_by(user_name=user_name).first()
         if user is not None and user.check_password(password):
-            login_user(user)
+            login_user(user, remember=False)
             return redirect(url_for("presentation.presentation"))
         flash("認証不備")
     return render_template("auth/login_form.html", form=form)
