@@ -26,7 +26,7 @@ login_manager.login_view = "auth.login"
 app.register_blueprint(auth_bp)
 app.register_blueprint(presentation_bp)
 
-app.config['SESSION_PARMANENT'] = False
+app.config['SESSION_PERMANENT'] = False
 
 from flask import redirect, url_for
 
