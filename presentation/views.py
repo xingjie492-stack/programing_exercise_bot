@@ -236,14 +236,6 @@ def review_code(user_id, submission_id):
     flash("バリデーションエラーが発生しました")
     return(url_for("presentation.generate_problem"))
 
-
-    # 3. 動的なURL（下記の show_upload 関数）にリダイレクト
-    return redirect(url_for(
-        'presentation.show_upload', 
-        user_id=current_user.user_id, 
-        submission_id=submission.submission_id
-    ))
-
 @presentation_bp.route("/reproduce/<int:submission_id>", methods=["POST"])
 @login_required
 def reproduce_problem(submission_id):
@@ -295,7 +287,7 @@ def example_answer(user_id, submission_id):
         db.session.rollback()
         flash("データの保存中にエラーが発生しました")
         return redirect(url_for("presentation.generate_problem"))
-    return render_template('presentation/example.html', example=example)
+    return render_template('presentation/example.html', example=example,submission=submission)
 
 @presentation_bp.route("/delete/<int:user_id>/<int:submission_id>", methods=["POST"])
 @login_required
