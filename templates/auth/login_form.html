@@ -1,24 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="my-4">ログイン</h1>
-    {% from "_formhelpers.html" import render_field %}
-    <form action="{{ url_for('auth.login') }}" method="post" >
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h1 class="text-center mb-4">ログイン</h1>
+                
+                {% from "_formhelpers.html" import render_field %}
+                <form action="{{ url_for('auth.login') }}" method="post">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {# render_fieldの中で form-control クラスが適用される想定です #}
+                        {{ render_field(form.user_name, class="form-control form-control-lg") }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ render_field(form.password, class="form-control form-control-lg") }}
+                    </div>
 
-        {{ form.hidden_tag() }}
-        {{ render_field(form.user_name, class="form-control") }}
-        {{ render_field(form.password, class="form-control") }}
-        <br>
-        {% for message in get_flashed_messages() %}
-        <div class="alert alert-info">
-            {{ message }}
+                    <div class="d-grid gap-2 mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+
+                {# フラッシュメッセージの表示 #}
+                {% for message in get_flashed_messages() %}
+                <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+
+                <hr class="my-4">
+                <p class="text-center mb-0">
+                    アカウントをお持ちでない場合は、
+                    <a href="{{ url_for('auth.register') }}" class="text-decoration-none">こちら</a>から登録してください
+                </p>
+            </div>
         </div>
-        {% endfor %}
-        {{ form.submit(class="btn btn-primary") }}
-    </form>
-
-    <p class="my-3">アカウントをお持ちでない場合は、
-    <a href="{{ url_for('auth.register') }}">こちら</a>
-    から登録してください
-    </p>
+    </div>
+</div>
 {% endblock content %}

@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>退会の確認</h2>
-    <p>{{ user.user_name }} さん、本当にアカウントを削除してもよろしいですか？</p>
-
-    <form action="{{ url_for('auth.delete', user_id=user.user_id) }}" method="POST">
-        <button type="submit" class="btn-danger">はい、削除します</button>
-        <a href="{{ url_for('presentation.presentation') }}">いいえ、戻ります</a>
-    </form>
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card border-danger shadow">
+            <div class="card-header bg-danger text-white">退会の確認</div>
+            <div class="card-body">
+                <p class="card-text"><strong>{{ user.user_name }}</strong> さん、本当にアカウントを削除してもよろしいですか？</p>
+                <div class="d-flex gap-2">
+                    <form action="{{ url_for('auth.delete', user_id=user.user_id) }}" method="POST" class="flex-grow-1">
+                        <button type="submit" class="btn btn-danger w-100">はい、削除します</button>
+                    </form>
+                    <a href="{{ url_for('presentation.presentation') }}" class="btn btn-secondary flex-grow-1">いいえ、戻ります</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
