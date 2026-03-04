@@ -35,5 +35,12 @@
             <button type="submit" class="btn btn-sm btn-outline-danger">履歴全削除</button>
         </form>
     </div>
+
+    {% for message in get_flashed_messages() %}
+    <div>
+        {{ message }}
+    </div>
+    {% endfor %}
+    
     </div>
 {% endblock content %}

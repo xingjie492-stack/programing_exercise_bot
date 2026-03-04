@@ -265,9 +265,13 @@ def delete_history(submission_id, user_id):
     try:
         db.session.delete(submission)
         db.session.commit()
+        flash("削除しました。")
+        return redirect(url_for("presentation.show_history"))
+
     except Exception as e:
         db.session.rollback()
         flash("削除処理中にエラーが発生しました。")
+        return redirect(url_for("presentation.show_history"))
 
     return redirect(url_for("presentation.show_history"))
 
@@ -276,6 +280,11 @@ def delete_history(submission_id, user_id):
 def delete_all_history(user_id):
     submissions = Submissions.query.filter_by(user_id = current_user.user_id).all()
     submission = Submissions.query.filter_by(user_id = current_user.user_id).first()
+    
+    if  not submissions:
+        flash ("削除するデータがありません")
+        redirect(url_for("presentation.show_history"))
+        return redirect(url_for("presentation.show_history"))
 
     if submission.user_id != current_user.user_id:
         flash("権限ないよ")
@@ -285,11 +294,12 @@ def delete_all_history(user_id):
         try:
             db.session.delete(submission)
             db.session.commit()
+            flash("すべての履歴を削除しました。")
         except Exception as e:
             flash("削除処理中にエラーが発生しました")
 
     return redirect(url_for("presentation.show_history"))
-    
+
 @presentation_bp.route("/presentation")
 @login_required
 def presentation():
