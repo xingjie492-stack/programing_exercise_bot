@@ -255,6 +255,41 @@ def example_answer(user_id, submission_id):
         return redirect(url_for("presentation.generate_problem"))
     return render_template('presentation/example.html', example=example)
 
+@presentation_bp.route("/delete/<int:user_id>/<int:submission_id>", methods=["POST"])
+@login_required
+def delete_history(submission_id, user_id):
+    submission = Submissions.query.get_or_404(submission_id)
+    if submission.user_id != current_user.user_id:
+        flash("削除権限がありません")
+        return redirect(url_for("presentation.show_history"))
+    try:
+        db.session.delete(submission)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        flash("削除処理中にエラーが発生しました。")
+
+    return redirect(url_for("presentation.show_history"))
+
+@presentation_bp.route("delete_all/<int:user_id>", methods=["POST"])
+@login_required
+def delete_all_history(user_id):
+    submissions = Submissions.query.filter_by(user_id = current_user.user_id).all()
+    submission = Submissions.query.filter_by(user_id = current_user.user_id).first()
+
+    if submission.user_id != current_user.user_id:
+        flash("権限ないよ")
+        redirect(url_for("presentation.show_history"))
+
+    for submission in submissions:
+        try:
+            db.session.delete(submission)
+            db.session.commit()
+        except Exception as e:
+            flash("削除処理中にエラーが発生しました")
+
+    return redirect(url_for("presentation.show_history"))
+    
 @presentation_bp.route("/presentation")
 @login_required
 def presentation():
