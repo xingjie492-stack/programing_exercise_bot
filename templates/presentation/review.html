@@ -8,7 +8,7 @@
     <div id="review-content" class="p-4 mb-4 border rounded bg-white shadow-sm" style="min-height: 200px;"></div>
     
     <div class="d-flex flex-wrap gap-2 mt-4">
-        <a href="{{ url_for('presentation.generate_problem') }}" class="btn btn-primary px-4">次の問題へ挑戦</a>
+        <a href="{{ url_for('presentation.next_problem', submission_id=submission.submission_id) }}" class="btn btn-primary px-4">次の問題へ挑戦</a>
         <a href="{{ url_for('presentation.example_answer', user_id=submission.user_id, submission_id=submission.submission_id) }}" class="btn btn-outline-info">
             模範解答を詳しく見る
         </a>
