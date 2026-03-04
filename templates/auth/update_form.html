@@ -1,16 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>ユーザ情報を変更</h1>
-    {% from "_formhelpers.html" import render_field %}
-    <form action="{{ url_for('auth.update', user_id=edit_id) }}" method="post">
-        {{ form.hidden_tag() }}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0">ユーザ情報を変更</h4>
+            </div>
+            <div class="card-body p-4">
+                {% from "_formhelpers.html" import render_field %}
+                <form action="{{ url_for('auth.update', user_id=edit_id) }}" method="post">
+                    {{ form.hidden_tag() }}
 
-        {{ render_field(form.user_name) }}
-        {{ render_field(form.password) }}
-        {{ render_field(form.email) }}
+                    <div class="mb-3">
+                        {{ render_field(form.user_name, class="form-control") }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ render_field(form.password, class="form-control") }}
+                        <small class="text-muted">変更しない場合は現在のパスワードを入力してください</small>
+                    </div>
 
-        {{ form.submit }}
-    </form>
-    <a href="{{ url_for('presentation.presentation') }}">戻る</a>
+                    <div class="mb-4">
+                        {{ render_field(form.email, class="form-control") }}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('presentation.presentation') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> 戻る
+                        </a>
+                        {{ form.submit(class="btn btn-success px-4") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
