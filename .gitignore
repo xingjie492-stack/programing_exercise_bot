@@ -4,3 +4,4 @@ instance/programing_exercise_bot_tables.sqlite
 __pycache__/
 *.sqlite
 migrations/
+run.bat
