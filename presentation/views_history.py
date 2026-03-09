@@ -32,8 +32,6 @@ def delete_history(submission_id, user_id):
         flash("削除処理中にエラーが発生しました。")
         return redirect(url_for("history.show_history"))
 
-    return redirect(url_for("history.show_history"))
-
 @history_bp.route("delete_all/<int:user_id>", methods=["POST"])
 @login_required
 def delete_all_history(user_id):
@@ -42,12 +40,11 @@ def delete_all_history(user_id):
     
     if  not submissions:
         flash ("削除するデータがありません")
-        redirect(url_for("history.show_history"))
         return redirect(url_for("history.show_history"))
 
     if submission.user_id != current_user.user_id:
         flash("権限ないよ")
-        redirect(url_for("history.show_history"))
+        return redirect(url_for("history.show_history"))
 
     try:
         for submission in submissions:
