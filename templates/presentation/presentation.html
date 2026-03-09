@@ -9,7 +9,7 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="card-title mb-4 border-bottom pb-2">出題設定</h5>
-            <form action="{{ url_for('presentation.generate_problem') }}" method="post">
+            <form action="{{ url_for('problem.generate_problem') }}" method="post">
                 <div class="mb-3">
                     <label for="language" class="form-label fw-bold">出題言語を選択</label>
                     <select name="selected_language" id="language" class="form-select form-select-lg">

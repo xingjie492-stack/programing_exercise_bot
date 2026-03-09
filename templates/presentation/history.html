@@ -13,14 +13,14 @@
                 <span class="text-muted small">過去の提出</span>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ url_for('presentation.show_upload', user_id=history.user_id, submission_id=history.submission_id) }}" class="btn btn-sm btn-outline-primary">回答を表示</a>
+                <a href="{{ url_for('problem.show_upload', user_id=history.user_id, submission_id=history.submission_id) }}" class="btn btn-sm btn-outline-primary">回答を表示</a>
                 
-                <form action="{{ url_for('presentation.reproduce_problem', submission_id=history.submission_id) }}" method="POST" class="m-0">
+                <form action="{{ url_for('review_and_example.reproduce_problem', submission_id=history.submission_id) }}" method="POST" class="m-0">
                     <button type="submit" class="btn btn-sm btn-success">再挑戦</button>
                 </form>
             </div>
             <div>
-                <form action="{{ url_for('presentation.delete_history', submission_id=history.submission_id, user_id=current_user.user_id) }}" method="POST" class="m-0" onsubmit="return confirm('この履歴を削除してもよろしいですか？');">
+                <form action="{{ url_for('history.delete_history', submission_id=history.submission_id, user_id=current_user.user_id) }}" method="POST" class="m-0" onsubmit="return confirm('この履歴を削除してもよろしいですか？');">
                     <button type="submit" class="btn btn-sm btn-outline-danger">削除</button>
                 </form>
             </div>
@@ -31,7 +31,7 @@
         </div>
     {% endfor %}
     <div>
-        <form action="{{ url_for('presentation.delete_all_history', user_id=current_user.user_id) }}" method="post" class="m-0" onsubmit="return confirm('履歴をすべて削除してもよろしいですか？');">
+        <form action="{{ url_for('history.delete_all_history', user_id=current_user.user_id) }}" method="post" class="m-0" onsubmit="return confirm('履歴をすべて削除してもよろしいですか？');">
             <button type="submit" class="btn btn-sm btn-outline-danger">履歴全削除</button>
         </form>
     </div>
