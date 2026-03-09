@@ -132,10 +132,10 @@ def next_problem(submission_id):
     # print(f"DEBUG: generated_prompt length={len(prompt) if prompt else 0}")
     # -----------------------
 
+    prompt = generate_prompt(old_submission.difficulty, old_submission.language)
+    
     problem = generate_content(prompt, "problem")
     
-    prompt = generate_prompt(old_submission.difficulty, old_submission.language)
-
     problem = generate_content(prompt,"problem")
     
     # 2. データベースに下書き（回答前）として保存
