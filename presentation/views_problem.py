@@ -31,12 +31,14 @@ def generate_prompt(difficulty,language):
                 これから「Python 3 エンジニア認定基礎試験」に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
                 なお、ここで模範解答は提示しないでください。
                 """
-            else:
+            elif difficulty =="hard":
                 prompt = f"""
                 あなたはプログラミング言語「{ language }」の講師です。
                 これから「PCPP1」に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
                 なお、ここで模範解答は提示しないでください。
                 """
+            else:
+                raise ValueError(f"無効な難易度設定です")
 
         elif language == "Java":
             if difficulty == "easy":
@@ -51,12 +53,15 @@ def generate_prompt(difficulty,language):
                 「Oracle Java Silver」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
                 なお、ここで模範解答は提示しないでください。
                 """
-            else:
+            elif difficulty =="hard":
                 prompt = f"""
                 あなたはプログラミング言語「{ language }」の講師です。
-                「Oracle Java Gold」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+                これから「PCPP1」に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
                 なお、ここで模範解答は提示しないでください。
                 """
+            else:
+                raise ValueError(f"無効な難易度設定です")
+
 
         elif language == "C language":
             if difficulty == "easy":
@@ -71,13 +76,15 @@ def generate_prompt(difficulty,language):
                 「C言語プログラミング能力認定試験2級」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
                 なお、ここで模範解答は提示しないでください。
                 """
-            else:
+            elif difficulty =="hard":
                 prompt = f"""
                 あなたはプログラミング言語「{ language }」の講師です。
-                「C言語プログラミング能力認定試験1級」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
+                これから「PCPP1」に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
                 なお、ここで模範解答は提示しないでください。
                 """
-        
+            else:
+                raise ValueError(f"無効な難易度設定です")
+
         else:
             ValueError(f"Unsupported language: {language}")
         
