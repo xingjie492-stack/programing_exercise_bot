@@ -20,7 +20,7 @@
                 </form>
             </div>
             <div>
-                <form action="{{ url_for('presentation.delete_history', submission_id=history.submission_id, user_id=current_user.user_id) }}" method="POST" class="m-0" onsubmit="return confirm('この履歴を削除してもよろしいですか？');">
+                <form action="{{ url_for('history.delete_history', submission_id=history.submission_id, user_id=current_user.user_id) }}" method="POST" class="m-0" onsubmit="return confirm('この履歴を削除してもよろしいですか？');">
                     <button type="submit" class="btn btn-sm btn-outline-danger">削除</button>
                 </form>
             </div>
@@ -31,7 +31,7 @@
         </div>
     {% endfor %}
     <div>
-        <form action="{{ url_for('presentation.delete_all_history', user_id=current_user.user_id) }}" method="post" class="m-0" onsubmit="return confirm('履歴をすべて削除してもよろしいですか？');">
+        <form action="{{ url_for('history.delete_all_history', user_id=current_user.user_id) }}" method="post" class="m-0" onsubmit="return confirm('履歴をすべて削除してもよろしいですか？');">
             <button type="submit" class="btn btn-sm btn-outline-danger">履歴全削除</button>
         </form>
     </div>
