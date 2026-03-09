@@ -8,7 +8,7 @@
     <div id="content" class="p-4 mb-4 border rounded bg-dark text-light shadow-lg"></div>
     
     <div class="mt-4">
-        <a href="{{ url_for('presentation.next_problem', submission_id=submission.submission_id) }}" class="btn btn-primary px-4">次の問題へ挑戦</a>
+        <a href="{{ url_for('problem.next_problem', submission_id=submission.submission_id) }}" class="btn btn-primary px-4">次の問題へ挑戦</a>
         <a href="{{ url_for('presentation.presentation') }}" class="btn btn-secondary">トップへ戻る</a>
     </div>
 {% endblock content %}
