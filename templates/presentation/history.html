@@ -15,7 +15,7 @@
             <div class="d-flex gap-2">
                 <a href="{{ url_for('problem.show_upload', user_id=history.user_id, submission_id=history.submission_id) }}" class="btn btn-sm btn-outline-primary">回答を表示</a>
                 
-                <form action="{{ url_for('presentation.reproduce_problem', submission_id=history.submission_id) }}" method="POST" class="m-0">
+                <form action="{{ url_for('review_and_example.reproduce_problem', submission_id=history.submission_id) }}" method="POST" class="m-0">
                     <button type="submit" class="btn btn-sm btn-success">再挑戦</button>
                 </form>
             </div>

@@ -4,7 +4,8 @@ from models import db, User
 from flask_login import LoginManager
 from auth.views import auth_bp
 from presentation.views import presentation_bp
-from presentation.views_problem import problem_bp
+from presentation.views_problem import problem_bp, next_problem
+from presentation.views_review_and_example import review_and_example_bp
 from datetime import timedelta
 
 # Flaskアプリケーションのインスタンス生成
@@ -27,6 +28,7 @@ login_manager.login_view = "auth.login"
 app.register_blueprint(auth_bp)
 app.register_blueprint(presentation_bp)
 app.register_blueprint(problem_bp)
+app.register_blueprint(review_and_example_bp)
 
 app.config['SESSION_PERMANENT'] = False
 

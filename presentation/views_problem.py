@@ -1,9 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from models import db, Submissions
 from flask_login import login_required, current_user
-import os
-from dotenv import load_dotenv
-import google.generativeai as genai
 from forms import UsersAnswer
 from datetime import datetime
 from presentation.views import generate_content
@@ -41,7 +38,7 @@ def generate_prompt(difficulty,language):
                 なお、ここで模範解答は提示しないでください。
                 """
 
-        if language == "Java":
+        elif language == "Java":
             if difficulty == "easy":
                 prompt = f"""
                 あなたはプログラミング言語「{ language }」の講師です。
@@ -61,7 +58,7 @@ def generate_prompt(difficulty,language):
                 なお、ここで模範解答は提示しないでください。
                 """
 
-        if language == "C language":
+        elif language == "C language":
             if difficulty == "easy":
                 prompt = f"""
                 あなたはプログラミング言語「{ language }」の講師です。
@@ -80,6 +77,9 @@ def generate_prompt(difficulty,language):
                 「C言語プログラミング能力認定試験1級」受験に臨む生徒に対して、その実力を試せるコーディング演習問題をMarkdown形式で一問出題してください。
                 なお、ここで模範解答は提示しないでください。
                 """
+        
+        else:
+            ValueError(f"Unsupported language: {language}")
         
         return prompt
 
@@ -115,6 +115,17 @@ def generate_problem():
 @login_required
 def next_problem(submission_id):
     old_submission = Submissions.query.get_or_404(submission_id)
+    
+    # --- デバッグ用プリント ---
+    # print(f"DEBUG: diff='{old_submission.difficulty}', lang='{old_submission.language}'")
+    
+    # prompt = generate_prompt(old_submission.difficulty, old_submission.language)
+    
+    # # プロンプトが空になっていないかチェック
+    # print(f"DEBUG: generated_prompt length={len(prompt) if prompt else 0}")
+    # -----------------------
+
+    problem = generate_content(prompt, "problem")
     
     prompt = generate_prompt(old_submission.difficulty, old_submission.language)
 
