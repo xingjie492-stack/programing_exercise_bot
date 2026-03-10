@@ -86,7 +86,7 @@ def generate_prompt(difficulty,language):
                 raise ValueError(f"無効な難易度設定です")
 
         else:
-            ValueError(f"Unsupported language: {language}")
+            raise ValueError(f"Unsupported language: {language}")
         
         return prompt
 
@@ -135,8 +135,6 @@ def next_problem(submission_id):
     prompt = generate_prompt(old_submission.difficulty, old_submission.language)
     
     problem = generate_content(prompt, "problem")
-    
-    problem = generate_content(prompt,"problem")
     
     # 2. データベースに下書き（回答前）として保存
     submission = Submissions(

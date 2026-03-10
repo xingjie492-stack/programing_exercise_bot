@@ -44,11 +44,11 @@ def review_code(user_id, submission_id):
 
         return render_template("presentation/review.html", review=review, submission=submission)
     flash("バリデーションエラーが発生しました")
-    return(url_for("problem.generate_problem"))
+    return redirect(url_for("problem.generate_problem"))
 
-@review_and_example_bp.route("/reproduce/<int:submission_id>", methods=["POST"])
+@review_and_example_bp.route("/reproduce/<int:user_id>/<int:submission_id>", methods=["POST"])
 @login_required
-def reproduce_problem(submission_id):
+def reproduce_problem(user_id,submission_id):
     # 1. 元の問題データを取得
     old_submission = Submissions.query.get_or_404(submission_id)
     
