@@ -33,6 +33,10 @@
         </div>
     </div>
 
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-info mt-3">{{ message }}</div>
+    {% endfor %}
+
     <div class="d-flex justify-content-end gap-2">
         <a href="{{ url_for('auth.update', user_id=current_user.user_id) }}" class="btn btn-outline-secondary btn-sm">ユーザー情報変更</a>
         <a href="{{ url_for('auth.delete', user_id=current_user.user_id) }}" class="btn btn-outline-danger btn-sm">アカウント削除</a>
