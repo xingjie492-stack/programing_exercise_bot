@@ -51,7 +51,7 @@ def logged_in_client(client, db):
     # 2. 実際にログイン処理を走らせてセッションを確立する
     client.post('/auth/', data={
         'user_name': 'testuser',
-        'password': 'password123'
+        'password': 'pass123'
     }, follow_redirects=True)
 
     yield client
