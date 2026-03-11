@@ -5,8 +5,8 @@ from flask import url_for
 
 
 
-def test_review_code_succes(auth_client, db, monkeypatch):
-    
+def test_review_code_succes(logged_in_client, db, monkeypatch):
+    test_user = User.query.filter_by(user_name="testuser").first()
     sub = Submissions(
         user_id = 1,
         problem_text = "test_problem_text",
@@ -16,12 +16,12 @@ def test_review_code_succes(auth_client, db, monkeypatch):
     db.session.add(sub)
     db.session.commit()
 
-    with auth_client.session_transaction() as sess:
+    with logged_in_client.session_transaction() as sess:
         sess['current_problem'] = 'test_problem_text'
 
     monkeypatch.setenv("MOCK_AI", "true")
     
-    response = auth_client.post(
+    response = logged_in_client.post(
         f'review_and_example/review/{test_user.user_id}/{sub.submission_id}',
         data={'user_code':'print("hello world")'},
         follow_redirects=True
@@ -36,7 +36,8 @@ def test_review_code_succes(auth_client, db, monkeypatch):
     
     assert b"review" in response.data.lower()
     
-def test_reproduce_problem(app, auth_client, db):
+def test_reproduce_problem(app, logged_in_client, db):
+    test_user = User.query.filter_by(user_name="testuser").first()
     old_sub = Submissions(
         user_id=1,
         problem_text="problem_text",
@@ -54,7 +55,7 @@ def test_reproduce_problem(app, auth_client, db):
     with app.test_request_context():
         target_url = url_for('review_and_example.reproduce_problem', user_id=test_user.user_id, submission_id=old_sub.submission_id)
 
-    response = auth_client.post(target_url, follow_redirects=True)
+    response = logged_in_client.post(target_url, follow_redirects=True)
     print(f"DEBUG: Generated URL is {target_url}")
     
     # 3. 検証
@@ -81,7 +82,8 @@ def test_reproduce_problem(app, auth_client, db):
     assert f"/problem/upload/{test_user.user_id}/{new_sub.submission_id}" in response.request.path
     
     
-def test_example_answer(auth_client, db, monkeypatch):
+def test_example_answer(logged_in_client, db, monkeypatch):
+    test_user = User.query.filter_by(user_name="testuser").first()
     sub = Submissions(
     user_id=1,
     problem_text="problem_text",
@@ -94,14 +96,14 @@ def test_example_answer(auth_client, db, monkeypatch):
     db.session.commit()
 
     # 2. セッションに問題文をセットし、AIをモックモードにする
-    with auth_client.session_transaction() as sess:
+    with logged_in_client.session_transaction() as sess:
         sess['current_problem'] = "セッションにある問題文"
         
     monkeypatch.setenv("MOCK_AI", "true")
     
     # 3. 実行：GETリクエスト
     # route: /example/<int:user_id>/<int:submission_id>
-    response = auth_client.get(f'/review_and_example/example/{test_user.user_id}/{sub.submission_id}')
+    response = logged_in_client.get(f'/review_and_example/example/{test_user.user_id}/{sub.submission_id}')
 
     # 4. 検証
     assert response.status_code == 200
@@ -111,7 +113,8 @@ def test_example_answer(auth_client, db, monkeypatch):
     assert "模範解答" in response.get_data(as_text=True)
     assert 'id="content"' in response.get_data(as_text=True)
 
-def test_example_answer_no_session(auth_client, db, monkeypatch):
+def test_example_answer_no_session(logged_in_client, db, monkeypatch):
+    test_user = User.query.filter_by(user_name="testuser").first()
     # セッションに 'current_problem' がない場合の網羅テスト
     sub = Submissions(user_id=1, problem_text="DBの問題", language="python", create_date=datetime.now())
     db.session.add(sub)
@@ -120,7 +123,7 @@ def test_example_answer_no_session(auth_client, db, monkeypatch):
     monkeypatch.setenv("MOCK_AI", "true")
 
     # セッションを空のままリクエスト
-    response = auth_client.get(f'/review_and_example/example/{test_user.user_id}/{sub.submission_id}')
+    response = logged_in_client.get(f'/review_and_example/example/{test_user.user_id}/{sub.submission_id}')
 
     assert response.status_code == 200
     # デフォルト値「問題が見つかりませんでした。」がプロンプトに使われているか確認

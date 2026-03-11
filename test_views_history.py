@@ -3,7 +3,9 @@ from datetime import datetime
 from unittest.mock import MagicMock
 from sqlalchemy.exc import SQLAlchemyError
 
-def test_delete_all_history_safety(auth_client, db):
+def test_delete_all_history_safety(logged_in_client, db):
+    test_user = User.query.filter_by(user_name="testuser").first()
+    
     # 自分の履歴（複数）
     sub1 = Submissions(user_id=1, problem_text="My Prob 1", create_date=datetime.now())
     sub2 = Submissions(user_id=1, problem_text="My Prob 2", create_date=datetime.now())
@@ -14,7 +16,7 @@ def test_delete_all_history_safety(auth_client, db):
     db.session.add_all([sub1, sub2, other_sub])
     db.session.commit()
     
-    response = auth_client.post(f'history/delete_all/{test_user.user_id}', follow_redirects=True)
+    response = logged_in_client.post(f'history/delete_all/{test_user.user_id}', follow_redirects=True)
 
     assert  response.status_code == 200
 
@@ -27,7 +29,8 @@ def test_delete_all_history_safety(auth_client, db):
 
     assert "すべての履歴を削除しました" in response.get_data(as_text=True)
     
-def test_delete_history(auth_client,db):
+def test_delete_history(logged_in_client,db):
+    test_user = User.query.filter_by(user_name="testuser").first()
     sub = Submissions(
     user_id=1,
     problem_text="problem_text",
@@ -38,14 +41,14 @@ def test_delete_history(auth_client,db):
     db.session.add(sub)
     db.session.commit()
 
-    response = auth_client.post(f"/history/delete/{test_user.user_id}/{sub.submission_id}", follow_redirects=True)
+    response = logged_in_client.post(f"/history/delete/{test_user.user_id}/{sub.submission_id}", follow_redirects=True)
     
     assert response.status_code == 200
     my_remaining = Submissions.query.filter_by(user_id=1).all()
     assert len(my_remaining) == 0
     assert "削除しました。" in response.get_data(as_text=True)
 
-def test_delete_history_unauth(auth_client, db):
+def test_delete_history_unauth(logged_in_client, db):
     sub = Submissions(
     user_id=99,
     problem_text="problem_text",
@@ -55,14 +58,15 @@ def test_delete_history_unauth(auth_client, db):
     )
     db.session.add(sub)
     db.session.commit()
-    response = auth_client.post(f"/history/delete/1/{sub.submission_id}", follow_redirects=True)
+    response = logged_in_client.post(f"/history/delete/1/{sub.submission_id}", follow_redirects=True)
     
     assert response.status_code == 200
     my_remaining = Submissions.query.filter_by(user_id=99).all()
     assert len(my_remaining) == 1
     assert "削除権限がありません" in response.get_data(as_text=True)
 
-def test_delete_history_db_error(auth_client, db):
+def test_delete_history_db_error(logged_in_client , db):
+    test_user = User.query.filter_by(user_name="testuser").first()
     # 1. 準備：自分のデータを作成
     sub = Submissions(
         user_id=1,
@@ -80,7 +84,7 @@ def test_delete_history_db_error(auth_client, db):
 
     try:
         # 3. 実行：POSTリクエストを送る
-        response = auth_client.post(
+        response = logged_in_client.post(
             f'/history/delete/{test_user.user_id}/{sub.submission_id}', 
             follow_redirects=True
         )

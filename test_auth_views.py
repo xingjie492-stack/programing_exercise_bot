@@ -1,7 +1,7 @@
 from models import User
 from flask import url_for
 
-def test_login_success(auth_client, db):
+def test_login_success(logged_in_client, db):
     # 1. 重複防止：既存の同名ユーザーを削除
     existing_user = User.query.filter_by(user_name="testuser").first()
     if existing_user:
@@ -15,7 +15,7 @@ def test_login_success(auth_client, db):
     db.session.commit()
 
     # 3. ログイン実行
-    response = auth_client.post('/auth/', data={
+    response = logged_in_client.post('/auth/', data={
         'user_name': 'testuser',
         'password': 'password123'
     }, follow_redirects=True)
@@ -23,7 +23,7 @@ def test_login_success(auth_client, db):
     assert response.status_code == 200
     assert "認証不備" not in response.get_data(as_text=True)
     
-def test_login_failure(auth_client, db):
+def test_login_failure(logged_in_client, db):
     # 1. 重複防止：既存の同名ユーザーを削除
     existing_user = User.query.filter_by(user_name="testuser").first()
     if existing_user:
@@ -37,7 +37,7 @@ def test_login_failure(auth_client, db):
     db.session.commit()
 
     # 3. ログイン実行
-    response = auth_client.post('/auth/', data={
+    response = logged_in_client.post('/auth/', data={
         'user_name': 'nottestuser',
         'password': 'notpassword123'
     }, follow_redirects=True)

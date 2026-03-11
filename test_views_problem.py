@@ -28,9 +28,9 @@ def client():
             yield client
             db.drop_all()
 
-def test_generate_problem_success(auth_client, db, monkeypatch):
-    # すでにログイン済み、DB初期化済みの auth_client が渡される
-    response = auth_client.post('/problem/generate', data={
+def test_generate_problem_success(logged_in_client, db, monkeypatch):
+    # すでにログイン済み、DB初期化済みの logged_in_client が渡される
+    response = logged_in_client.post('/problem/generate', data={
         'selected_difficulty': 'easy',
         'selected_language': 'python'
     })
@@ -38,7 +38,7 @@ def test_generate_problem_success(auth_client, db, monkeypatch):
     assert response.status_code == 302 # リダイレクトされるはず
     assert "/problem/upload/" in response.location
 
-def test_next_problem(auth_client, db, monkeypatch):
+def test_next_problem(logged_in_client, db, monkeypatch):
     old_sub = Submissions(
         user_id=1,
         problem_text="old_problem_text",
@@ -51,7 +51,7 @@ def test_next_problem(auth_client, db, monkeypatch):
     
     monkeypatch.setenv("MOCK_AI", "true")
     
-    response = auth_client.get(
+    response = logged_in_client.get(
         f'/problem/generate/{old_sub.submission_id}',
         follow_redirects=True
     )
@@ -68,7 +68,7 @@ def test_next_problem(auth_client, db, monkeypatch):
     assert new_sub.submission_id != old_sub.submission_id
     assert "渡された問題プロンプト" in new_sub.problem_text
 
-def test_show_upload(auth_client, db):
+def test_show_upload(logged_in_client, db):
     sub = Submissions(
         user_id=1,
         problem_text="problem_text",
@@ -79,15 +79,15 @@ def test_show_upload(auth_client, db):
     db.session.add(sub)
     db.session.commit()
     
-    response = auth_client.get(f'/problem/upload/1/{sub.submission_id}')
+    response = logged_in_client.get(f'/problem/upload/1/{sub.submission_id}')
 
     assert response.status_code == 200
     assert b"problem_text" in response.data
     
-    with auth_client.session_transaction() as sess:
+    with logged_in_client.session_transaction() as sess:
         assert sess['current_problem'] == "problem_text"
 
-def test_show_upload_unauthorized(auth_client,db):
+def test_show_upload_unauthorized(logged_in_client, db):
     other_sub = Submissions(
         user_id=99,
         problem_text="others_problem_text",
@@ -98,7 +98,7 @@ def test_show_upload_unauthorized(auth_client,db):
     db.session.add(other_sub)
     db.session.commit()
 
-    response = auth_client.get(f'/problem/upload/1/{other_sub.submission_id}', follow_redirects=True)
+    response = logged_in_client.get(f'/problem/upload/1/{other_sub.submission_id}', follow_redirects=True)
 
     assert "アクセス権限がありません" in response.get_data(as_text=True)
     assert response.request.path == "/presentation/presentation"
