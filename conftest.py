@@ -44,7 +44,7 @@ def logged_in_client(client, db):
         email="test@example.com", 
         is_admin=1
     )
-    test_user.set_password("password123")
+    test_user.set_password("pass123")
     db.session.add(test_user)
     db.session.commit()
 
