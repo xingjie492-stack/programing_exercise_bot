@@ -1,5 +1,7 @@
 from models import Submissions, User
 from datetime import datetime
+from unittest.mock import MagicMock
+from sqlalchemy.exc import SQLAlchemyError
 
 def test_delete_all_history_safety(auth_client, db):
     # 自分の履歴（複数）
@@ -12,7 +14,7 @@ def test_delete_all_history_safety(auth_client, db):
     db.session.add_all([sub1, sub2, other_sub])
     db.session.commit()
     
-    response = auth_client.post('history/delete_all/1', follow_redirects=True)
+    response = auth_client.post(f'history/delete_all/{test_user.user_id}', follow_redirects=True)
 
     assert  response.status_code == 200
 
@@ -24,3 +26,72 @@ def test_delete_all_history_safety(auth_client, db):
     assert others_remaining[0].problem_text == "Other User Prob"
 
     assert "すべての履歴を削除しました" in response.get_data(as_text=True)
+    
+def test_delete_history(auth_client,db):
+    sub = Submissions(
+    user_id=1,
+    problem_text="problem_text",
+    difficulty="easy",
+    language="python",
+    create_date=datetime.now()
+    )
+    db.session.add(sub)
+    db.session.commit()
+
+    response = auth_client.post(f"/history/delete/{test_user.user_id}/{sub.submission_id}", follow_redirects=True)
+    
+    assert response.status_code == 200
+    my_remaining = Submissions.query.filter_by(user_id=1).all()
+    assert len(my_remaining) == 0
+    assert "削除しました。" in response.get_data(as_text=True)
+
+def test_delete_history_unauth(auth_client, db):
+    sub = Submissions(
+    user_id=99,
+    problem_text="problem_text",
+    difficulty="easy",
+    language="python",
+    create_date=datetime.now()
+    )
+    db.session.add(sub)
+    db.session.commit()
+    response = auth_client.post(f"/history/delete/1/{sub.submission_id}", follow_redirects=True)
+    
+    assert response.status_code == 200
+    my_remaining = Submissions.query.filter_by(user_id=99).all()
+    assert len(my_remaining) == 1
+    assert "削除権限がありません" in response.get_data(as_text=True)
+
+def test_delete_history_db_error(auth_client, db):
+    # 1. 準備：自分のデータを作成
+    sub = Submissions(
+        user_id=1,
+        problem_text="エラーテスト用",
+        language="python",
+        difficulty="easy",
+        create_date=datetime.now()
+    )
+    db.session.add(sub)
+    db.session.commit()
+
+    # 2. commitメソッドを一時的に「エラーを投げる関数」に差し替える
+    original_commit = db.session.commit
+    db.session.commit = MagicMock(side_effect=SQLAlchemyError("DB Error"))
+
+    try:
+        # 3. 実行：POSTリクエストを送る
+        response = auth_client.post(
+            f'/history/delete/{test_user.user_id}/{sub.submission_id}', 
+            follow_redirects=True
+        )
+
+        # 4. 検証
+        assert response.status_code == 200
+        # flashメッセージの確認
+        assert "削除処理中にエラーが発生しました。" in response.get_data(as_text=True)
+        # ロールバックされてデータが残っているか
+        assert Submissions.query.get(sub.submission_id) is not None
+
+    finally:
+        # 5. 後片付け：差し替えたcommitを元に戻す（重要！）
+        db.session.commit = original_commit

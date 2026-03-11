@@ -1,9 +1,12 @@
-from models import Submissions
+from models import Submissions, User
 from datetime import datetime
 from presentation.views_review_and_example import reproduce_problem
 from flask import url_for
 
+
+
 def test_review_code_succes(auth_client, db, monkeypatch):
+    
     sub = Submissions(
         user_id = 1,
         problem_text = "test_problem_text",
@@ -19,7 +22,7 @@ def test_review_code_succes(auth_client, db, monkeypatch):
     monkeypatch.setenv("MOCK_AI", "true")
     
     response = auth_client.post(
-        f'review_and_example/review/1/{sub.submission_id}',
+        f'review_and_example/review/{test_user.user_id}/{sub.submission_id}',
         data={'user_code':'print("hello world")'},
         follow_redirects=True
     )
@@ -49,7 +52,7 @@ def test_reproduce_problem(app, auth_client, db):
 
     # 2. 実行：reproduce_problem へのGETリクエスト
     with app.test_request_context():
-        target_url = url_for('review_and_example.reproduce_problem', user_id=1, submission_id=old_sub.submission_id)
+        target_url = url_for('review_and_example.reproduce_problem', user_id=test_user.user_id, submission_id=old_sub.submission_id)
 
     response = auth_client.post(target_url, follow_redirects=True)
     print(f"DEBUG: Generated URL is {target_url}")
@@ -75,38 +78,38 @@ def test_reproduce_problem(app, auth_client, db):
     assert new_sub.review is None
 
     # 正しい画面（アップロード画面）に遷移しているか
-    assert f"/problem/upload/1/{new_sub.submission_id}" in response.request.path
+    assert f"/problem/upload/{test_user.user_id}/{new_sub.submission_id}" in response.request.path
     
     
 def test_example_answer(auth_client, db, monkeypatch):
-        sub = Submissions(
-        user_id=1,
-        problem_text="problem_text",
-        difficulty="easy",
-        language="python",
-        create_date=datetime.now()
-    )
-    
-        db.session.add(sub)
-        db.session.commit()
+    sub = Submissions(
+    user_id=1,
+    problem_text="problem_text",
+    difficulty="easy",
+    language="python",
+    create_date=datetime.now()
+)
 
-        # 2. セッションに問題文をセットし、AIをモックモードにする
-        with auth_client.session_transaction() as sess:
-            sess['current_problem'] = "セッションにある問題文"
-            
-        monkeypatch.setenv("MOCK_AI", "true")
+    db.session.add(sub)
+    db.session.commit()
+
+    # 2. セッションに問題文をセットし、AIをモックモードにする
+    with auth_client.session_transaction() as sess:
+        sess['current_problem'] = "セッションにある問題文"
         
-        # 3. 実行：GETリクエスト
-        # route: /example/<int:user_id>/<int:submission_id>
-        response = auth_client.get(f'/review_and_example/example/1/{sub.submission_id}')
+    monkeypatch.setenv("MOCK_AI", "true")
+    
+    # 3. 実行：GETリクエスト
+    # route: /example/<int:user_id>/<int:submission_id>
+    response = auth_client.get(f'/review_and_example/example/{test_user.user_id}/{sub.submission_id}')
 
-        # 4. 検証
-        assert response.status_code == 200
-        # モックが返す「渡されたレビュー又は模範解答プロンプト...」が含まれているか
-        assert "python" in response.get_data(as_text=True).lower()
-        # 正しいテンプレートが使われているか（HTML内の特徴的な文字を探す）
-        assert "模範解答" in response.get_data(as_text=True)
-        assert 'id="content"' in response.get_data(as_text=True)
+    # 4. 検証
+    assert response.status_code == 200
+    # モックが返す「渡されたレビュー又は模範解答プロンプト...」が含まれているか
+    assert "python" in response.get_data(as_text=True).lower()
+    # 正しいテンプレートが使われているか（HTML内の特徴的な文字を探す）
+    assert "模範解答" in response.get_data(as_text=True)
+    assert 'id="content"' in response.get_data(as_text=True)
 
 def test_example_answer_no_session(auth_client, db, monkeypatch):
     # セッションに 'current_problem' がない場合の網羅テスト
@@ -117,7 +120,7 @@ def test_example_answer_no_session(auth_client, db, monkeypatch):
     monkeypatch.setenv("MOCK_AI", "true")
 
     # セッションを空のままリクエスト
-    response = auth_client.get(f'/review_and_example/example/1/{sub.submission_id}')
+    response = auth_client.get(f'/review_and_example/example/{test_user.user_id}/{sub.submission_id}')
 
     assert response.status_code == 200
     # デフォルト値「問題が見つかりませんでした。」がプロンプトに使われているか確認
